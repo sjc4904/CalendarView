@@ -26,6 +26,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -36,8 +38,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 
 /**
@@ -397,9 +398,11 @@ public class CalendarLayout extends LinearLayout {
                     }
                     return super.onTouchEvent(event);
                 }
-                if (event.getY() - downY > 0) {
+
+                //原库判断差值与0的大小，会导致点击事件经常触发列表的行为，值设置过大会导致monthView出现滑动中间状态
+                if (event.getY() - downY > 80) {
                     expand();
-                } else {
+                } else if (downY - event.getY() > 80){
                     shrink();
                 }
                 break;
@@ -507,7 +510,12 @@ public class CalendarLayout extends LinearLayout {
                     return false;
                 }
 
-                if (Math.abs(dy) > Math.abs(dx) ) { //纵向滑动距离大于横向滑动距离,拦截滑动事件
+                if (Math.abs(dy) < 3 && Math.abs(dx) < 3) {
+                    //修复点击事件被父控件拦截导致的日期点击不灵敏
+                    return false;
+                }
+
+                if (Math.abs(dy) > Math.abs(dx)) { //纵向滑动距离大于横向滑动距离,拦截滑动事件
                     if ((dy > 0 && mContentView.getTranslationY() <= 0)
                             || (dy < 0 && mContentView.getTranslationY() >= -mContentViewTranslateY)) {
                         mLastY = y;
@@ -883,6 +891,12 @@ public class CalendarLayout extends LinearLayout {
     protected boolean isScrollTop() {
         if (mContentView instanceof CalendarScrollView) {
             return ((CalendarScrollView) mContentView).isScrollToTop();
+        }
+
+        //解决滑动冲突问题：mContentView的第一个子项需为RecyclerView
+        if (mContentView instanceof SmartRefreshLayout) {
+            RecyclerView recyclerView = (RecyclerView)(((SmartRefreshLayout)mContentView).getChildAt(0));
+            return recyclerView.computeVerticalScrollOffset() == 0;
         }
         if (mContentView instanceof RecyclerView)
             return ((RecyclerView) mContentView).computeVerticalScrollOffset() == 0;

@@ -17,14 +17,13 @@ package com.haibin.calendarview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -135,11 +134,13 @@ public final class MonthViewPager extends ViewPager {
 
 
                 if (mDelegate.getSelectMode() == CalendarViewDelegate.SELECT_MODE_DEFAULT) {
-                    if (!calendar.isCurrentMonth()) {
+                    mDelegate.mSelectedCalendar = calendar;
+                    //删除逻辑：月视图下 滑动到包含当日的月页面时，默认会选中当天的日期
+                    /*if (!calendar.isCurrentMonth()) {
                         mDelegate.mSelectedCalendar = calendar;
                     } else {
                         mDelegate.mSelectedCalendar = CalendarUtil.getRangeEdgeCalendar(calendar, mDelegate);
-                    }
+                    }*/
                     mDelegate.mIndexCalendar = mDelegate.mSelectedCalendar;
                 } else {
                     if (mDelegate.mSelectedStartRangeCalendar != null &&

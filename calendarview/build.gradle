@@ -38,10 +38,10 @@ dependencies {
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    //noinspection GradleDependency
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    //noinspection GradleDependency
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+
     testImplementation 'junit:junit:4.12'
+
+    compileOnly "com.android.support:appcompat-v7:28.0.0"
+    compileOnly "com.android.support:recyclerview-v7:28.0.0"
+    compileOnly 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.4-5'
 }
-apply from: '../script/gradle-jcenter-push.gradle'

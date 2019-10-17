@@ -69,9 +69,10 @@ public abstract class BaseWeekView extends BaseView {
         }
 
         int week = CalendarUtil.getWeekViewIndexFromCalendar(calendar, mDelegate.getWeekStart());
-        if (mItems.contains(mDelegate.getCurrentDay())) {
+        //删除逻辑：周视图下 滑动到包含当日的周页面时，默认会选中当天的日期
+        /*if (mItems.contains(mDelegate.getCurrentDay())) {
             week = CalendarUtil.getWeekViewIndexFromCalendar(mDelegate.getCurrentDay(), mDelegate.getWeekStart());
-        }
+        }*/
 
         int curIndex = week;
 
